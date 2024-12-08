@@ -46,7 +46,9 @@ public class ComputerMenu {
     }
 
     private static void changeComputerName(int computerID) {
-        //TODO
+        String input = UserMenu.getUserInput("\nPlease enter a new Computer name: ");
+
+        //TODO: change item in DB
     }
 
     private static void editComputerParts(int computerID) {
