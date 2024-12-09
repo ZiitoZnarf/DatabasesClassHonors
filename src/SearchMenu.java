@@ -12,7 +12,16 @@ public class SearchMenu {
         //exit when you quit
         while(!exitLoop) {
             boolean exitLoop2 = false;
-            isMotherboard = executeSearch(partIds);
+
+            partIds = new ArrayList<>();
+
+            try {
+                isMotherboard = executeSearch(partIds);
+            }
+            catch (Exception ex) {
+                System.out.println("Error: Invalid Search Arguments Entered!");
+                partIds = new ArrayList<>();
+            }
 
             while(!exitLoop2) {
 
