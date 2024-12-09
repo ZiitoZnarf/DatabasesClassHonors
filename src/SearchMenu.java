@@ -379,7 +379,7 @@ public class SearchMenu {
             conn.close();
         }
         catch (SQLException exc) {
-            System.out.println("ERROR: INVALID QUERY");
+            System.out.println("ERROR: Unable to add Item to Computer");
             //exc.printStackTrace();
         }
 
