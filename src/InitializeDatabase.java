@@ -21,25 +21,35 @@ public class InitializeDatabase {
             try (Connection conn = DriverManager.getConnection(url + "PC_Builder_DB", username, password)) {
                 System.out.println("Connected to PC_Builder_DB!");
 
+                // Read and execute SQL file to initialize the database
+                String sqlCommands = new String(Files.readAllBytes(Paths.get(sqlFilePath)));
+                String[] commands = sqlCommands.split(";");
+
+                // Execute all the non-INSERT commands (CREATE TABLE)
+                try (Statement stmt = conn.createStatement()) {
+                    for (String command : commands) {
+                        if (!command.trim().isEmpty() && !command.trim().startsWith("INSERT")) {
+                            stmt.execute(command.trim());
+//                            System.out.println("Executed: " + command.trim()); // Debugging
+                        }
+                    }
+                }
+
                 // Check if data already exists in the tables
                 String checkDataQuery = "SELECT COUNT(*) FROM USER_ACCOUNT";
                 try (Statement stmt = conn.createStatement();
                      ResultSet rs = stmt.executeQuery(checkDataQuery)) {
                     if (rs.next() && rs.getInt(1) > 0) {
                         System.out.println("Data already exists in the tables. Skipping initialization.");
-                        return;
-                    }
-                }
-
-                // Read and execute SQL file to initialize the database
-                String sqlCommands = new String(Files.readAllBytes(Paths.get(sqlFilePath)));
-                String[] commands = sqlCommands.split(";");
-
-                try (Statement stmt = conn.createStatement()) {
-                    for (String command : commands) {
-                        if (!command.trim().isEmpty()) {
-                            stmt.execute(command.trim());
-//                            System.out.println("Executed: " + command.trim()); // Debugging
+                    } else {
+                        // Execute all the INSERT commands since data doesn't exist
+                        try (Statement stmt2 = conn.createStatement()) {
+                            for (String command : commands) {
+                                if (command.trim().startsWith("INSERT")) {
+                                    stmt2.execute(command.trim());
+//                                    System.out.println("Inserted data: " + command.trim()); // Debugging
+                                }
+                            }
                         }
                     }
                 }
@@ -50,20 +60,7 @@ public class InitializeDatabase {
         }
     }
 
-//    public static void main(String[] args) {
-//        initializeDatabase(
-//                "jdbc:mysql://localhost:3306/",
-//                "root",
-//                "password",
-//                "src/pc_builder_db_init.sql"
-//        );
-//    }
 
-    /*
-    My command line arguments for runnning:
-    javac -cp .:/Users/tim/IdeaProjects/SER322Honors/mysql-connector-j-8.4.0.jar InitializeDatabase.java
-    java -cp .:/Users/tim/IdeaProjects/SER322Honors/mysql-connector-j-8.4.0.jar InitializeDatabase jdbc:mysql://localhost:3306/ root password src/pc_builder_db_init.sql
-     */
     public static void main(String[] args) {
         if (args.length != 4) {
             System.err.println("Usage: java InitializeDatabase <url> <username> <password> <sqlFilePath>");

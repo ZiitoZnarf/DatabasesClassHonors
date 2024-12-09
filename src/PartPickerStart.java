@@ -1,20 +1,36 @@
 public class PartPickerStart {
 
     public static void main(String[] args) {
-        //TODO: Gather Database info from args right here
+        if (args.length != 4) {
+            System.err.println("Usage: java PartPickerStart <url> <username> <password> <sqlFilePath>");
+            return;
+        }
 
+        // NOTE: these strings are for initializing the db. The url, username, and password are stored in DatabaseConfig
+        // Possibly refactor later, but for now, this is fine.
+        String baseUrl = args[0]; // NOTE: This is the base URL without the database name, due to init setup code
+        String username = args[1];
+        String password = args[2];
+        String sqlFilePath = args[3];
+
+        // Save the database configuration (url, user, pass) for later use
+        DatabaseConfig dbConfig = new DatabaseConfig(baseUrl, username, password);
+
+        // Initialize the database (requires baseURL specifically)
+        InitializeDatabase.initializeDatabase(baseUrl, username, password, sqlFilePath);
 
         //TODO: Inform if arguments or connection invalid.
 
         //Prompt User Login/Register/Quit in a NEW Method
-        openStartMenu();
+        openStartMenu(dbConfig); // Pass the dbConfig object to the method (this could be done differently if needed)
 
         //TODO: Error Handling
         //TODO: Close Database Connection
+
     }
 
 
-    private static void openStartMenu() {
+    private static void openStartMenu(DatabaseConfig dbConfig) {
         System.out.println("==Welcome to the PC Builder Application==");
         boolean exitLoop = false;
 
@@ -27,10 +43,10 @@ public class PartPickerStart {
 
             switch (input.toLowerCase()) {
                 case "l":
-                    openLoginOption();
+                    openLoginOption(dbConfig);
                     break;
                 case "r":
-                    openRegisterOption();
+                    openRegisterOption(dbConfig);
                     break;
                 case "q":
                     exitLoop = true;
@@ -42,8 +58,10 @@ public class PartPickerStart {
     }
 
     //TODO: DB Compatible
-    private static void openLoginOption() {
+    private static void openLoginOption(DatabaseConfig dbConfig) {
         boolean exitLoop = false;
+        // Create UserInteraction object to interact with the database
+        UserInteraction userInteraction = new UserInteraction(dbConfig);
 
         while (!exitLoop) {
             String inputUsername = UserMenu.getUserInput("Input Username: ");
@@ -51,16 +69,19 @@ public class PartPickerStart {
             System.out.println();
 
             //TODO: CHECK HERE IF USERNAME/PASSWORD IS VALID
-            boolean loginValid = true;
+            boolean loginValid = userInteraction.validateLogin(inputUsername, inputPassword);
 
             if (loginValid) {
-                //TODO: Fetch first computer for given username
-                int computerID = 1;
-
-                //Create menu object and go to user menu
-                UserMenu userMenu = new UserMenu(inputUsername, computerID);
-                userMenu.openUserMenu();
-                exitLoop = true;
+                //TODO: FIX THIS, returning error Unknown column 'computer_id' in 'field list'
+                int computerID = userInteraction.getUserComputerId(inputUsername);
+                if (computerID != -1) {
+                    // Create menu object and go to user menu
+                    UserMenu userMenu = new UserMenu(inputUsername, computerID);
+                    userMenu.openUserMenu();
+                    exitLoop = true;
+                } else {
+                    System.out.println("Error: No computer found for the user.");
+                }
             }
             else {
                 System.out.println("Given Username and Password do not match.");
@@ -92,7 +113,7 @@ public class PartPickerStart {
 
     //TODO: DB Compatible
     //TODO: Username/Password Length Checks
-    private static void openRegisterOption() {
+    private static void openRegisterOption(DatabaseConfig dbConfig) {
         boolean exitLoop = false;
 
         while (!exitLoop) {

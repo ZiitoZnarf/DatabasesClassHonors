@@ -30,6 +30,7 @@ bin/
 
 ### DZ ignore ###
 .idea/**/checkstyle-idea.xml
+.env
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/intellij
@@ -149,3 +150,4 @@ fabric.properties
 .idea/**/azureSettings.xml
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij
+
