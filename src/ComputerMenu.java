@@ -52,7 +52,8 @@ public class ComputerMenu {
     }
 
     private static void editComputerParts(int computerID) {
-        //TODO
+        //TODO: Get Computer Parts
+
     }
 
     //Returns new active computerID

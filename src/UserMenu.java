@@ -24,8 +24,12 @@ public class UserMenu {
 
             switch (input.toLowerCase()) {
                 case "c":
+                    ComputerMenu menu = new ComputerMenu();
+                    menu.openComputerMenu(this);
                     break;
                 case "p":
+                    SearchMenu menu2 = new SearchMenu();
+                    menu2.openSearchMenu(this);
                     break;
                 case "a":
                     this.openAccountOption();
@@ -79,7 +83,10 @@ public class UserMenu {
     //Returns username that will be used henceforth
     private static String changeUsername (String origUsername) {
         String input = UserMenu.getUserInput("\nEnter a new Username: ");
-        //TODO: Check that username is long enough
+        while (input.length() == 0) {
+            input = UserMenu.getUserInput("");
+        }
+
         //TODO: Check that username is not already taken
         //TODO: Change Username in DB
         //TODO: Give Proper failure/Success output
@@ -89,8 +96,11 @@ public class UserMenu {
     //TODO: DB Compatible
     private static void changePassword (String username) {
         String input = UserMenu.getUserInput("\nEnter a new Password: ");
-        //TODO: Check that password is long enough
-        //TODO: Change Username in DB
+        while (input.length() == 0) {
+            input = UserMenu.getUserInput("");
+        }
+
+        //TODO: Change Password in DB
         //TODO: Give Proper failure/Success output
     }
 
