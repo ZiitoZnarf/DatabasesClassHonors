@@ -100,7 +100,7 @@ public class SearchMenu {
 
                 query = "SELECT * FROM MOTHERBOARD WHERE 1=1";
                 if (!inputName.isEmpty())
-                    query += " AND MotherboardName = '%" + inputName + "%'";
+                    query += " AND MotherboardName LIKE '%" + inputName + "%'";
                 if (!inputMinPrice.isEmpty())
                     query += " AND MotherboardPrice >= " + Double.parseDouble(inputMinPrice);
                 if (!inputMaxPrice.isEmpty())
@@ -138,7 +138,7 @@ public class SearchMenu {
 
                 query = "SELECT * FROM PART, RAM WHERE PART.PartID = RAM.PartID";
                 if (!inputName.isEmpty())
-                    query += " AND PartName = '%" + inputName + "%'";
+                    query += " AND PartName LIKE '%" + inputName + "%'";
                 if (!inputMinPrice.isEmpty())
                     query += " AND PartPrice >= " + Double.parseDouble(inputMinPrice);
                 if (!inputMaxPrice.isEmpty())
@@ -180,7 +180,7 @@ public class SearchMenu {
 
                 query = "SELECT * FROM PART, STORAGE WHERE PART.PartID = STORAGE.PartID";
                 if (!inputName.isEmpty())
-                    query += " AND PartName = '%" + inputName + "%'";
+                    query += " AND PartName LIKE '%" + inputName + "%'";
                 if (!inputMinPrice.isEmpty())
                     query += " AND PartPrice >= " + Double.parseDouble(inputMinPrice);
                 if (!inputMaxPrice.isEmpty())
@@ -190,11 +190,11 @@ public class SearchMenu {
                 if (!inputMaxCapacity.isEmpty())
                     query += " AND Capacity <= " + Integer.parseInt(inputMaxCapacity);
                 if (!inputStorageType.isEmpty())
-                    query += " AND Type = '%" + inputStorageType + "%'";
+                    query += " AND Type LIKE '%" + inputStorageType + "%'";
                 if (!inputInterface.isEmpty())
-                    query += " AND Interface = '%" + Integer.parseInt(inputInterface) + "%'";
+                    query += " AND Interface LIKE '%" + inputInterface +"%'";
                 if (!inputFormFactor.isEmpty())
-                    query += " AND FormFactor = '%" + Integer.parseInt(inputFormFactor) + "%'";
+                    query += " AND FormFactor LIKE '%" + inputFormFactor + "%'";
 
                 break;
             case "c":
@@ -219,7 +219,7 @@ public class SearchMenu {
 
                 query = "SELECT * FROM PART, PROCESSOR WHERE PART.PartID = PROCESSOR.PartID";
                 if (!inputName.isEmpty())
-                    query += " AND PartName = '%" + inputName + "%'";
+                    query += " AND PartName LIKE '%" + inputName + "%'";
                 if (!inputMinPrice.isEmpty())
                     query += " AND PartPrice >= " + Double.parseDouble(inputMinPrice);
                 if (!inputMaxPrice.isEmpty())
@@ -256,13 +256,13 @@ public class SearchMenu {
 
                 query = "SELECT * FROM PART, GRAPHICS_CARD WHERE PART.PartID = GRAPHICS_CARD.PartID";
                 if (!inputName.isEmpty())
-                    query += " AND PartName = '%" + inputName + "%'";
+                    query += " AND PartName LIKE '%" + inputName + "%'";
                 if (!inputMinPrice.isEmpty())
                     query += " AND PartPrice >= " + Double.parseDouble(inputMinPrice);
                 if (!inputMaxPrice.isEmpty())
                     query += " AND PartPrice <= " + Double.parseDouble(inputMaxPrice);
                 if (!inputChipset.isEmpty())
-                    query += " AND Chipset = '%" + inputChipset + "%'";
+                    query += " AND Chipset LIKE '%" + inputChipset + "%'";
                 if (!inputMinLength.isEmpty())
                     query += " AND Length >= " + Integer.parseInt(inputMinLength);
                 if (!inputMaxLength.isEmpty())
@@ -288,7 +288,7 @@ public class SearchMenu {
 
                 query = "SELECT * FROM PART, POWER_SUPPLY WHERE PART.PartID = POWER_SUPPLY.PartID";
                 if (!inputName.isEmpty())
-                    query += " AND PartName = '%" + inputName + "%'";
+                    query += " AND PartName LIKE '%" + inputName + "%'";
                 if (!inputMinPrice.isEmpty())
                     query += " AND PartPrice >= " + Double.parseDouble(inputMinPrice);
                 if (!inputMaxPrice.isEmpty())
@@ -315,28 +315,30 @@ public class SearchMenu {
 
         ResultSetMetaData metaData = rs.getMetaData();
         int numColumns = metaData.getColumnCount();
-        System.out.print("NumberID\t\t");
+        System.out.printf("%-24s", "NumberID");
 
         for (int i = 2; i <= numColumns; i++) {
-            System.out.print(metaData.getColumnLabel(i) + "\t\t");
+            System.out.printf("%-24s", metaData.getColumnLabel(i));
         }
 
 
         System.out.println();
 
         Object obj = null;
+        int rowNum = 1;
         while(rs.next()) {
             partIDs.add(rs.getInt(1));
+            System.out.printf("%-24s", rowNum++);
             for (int i = 2; i <= numColumns; i++) {
-                System.out.print(i + "\t\t");
                 obj = rs.getObject(i);
                 if (obj != null) {
-                    System.out.print(obj.toString() + "\t\t");
+                    System.out.printf("%-24s", obj.toString());
                 }
                 else {
-                    System.out.print("\t\t\t");
+                    System.out.printf("%-24s", "");
                 }
             }
+            System.out.println();
         }
 
 
@@ -356,23 +358,29 @@ public class SearchMenu {
         }
 
         System.out.println("Please Enter the quantity of the item you wish to add: ");
-        String temp = UserMenu.getUserInput("");
-        int inputCount = Integer.parseInt(temp);
+
+        int inputCount = -1;
+        while(inputCount < 1 || inputNum > partIDs.size()) {
+            String temp = UserMenu.getUserInput("");
+            inputCount = Integer.parseInt(temp);
+        }
+
 
 
         try {
             Connection conn = DriverManager.getConnection(dbConfig.getJdbcUrl(), dbConfig.getUsername(), dbConfig.getPassword());
             Statement stmt = conn.createStatement();
             if (isMotherboard)
-                stmt.executeUpdate("INSERT INTO CONTAINS_MB VALUES (" + menuInfo.getComputerID() + ", " + partIDs.get(inputNum) + ");");
+                stmt.executeUpdate("INSERT INTO CONTAINS_MB VALUES (" + menuInfo.getComputerID() + ", " + partIDs.get(inputNum - 1) + ");");
             else
-                stmt.executeUpdate("INSERT INTO CONTAINS_PART VALUES (" + menuInfo.getComputerID() + ", " + partIDs.get(inputNum) + ", " + inputCount + ");");
+                stmt.executeUpdate("INSERT INTO CONTAINS_PART VALUES (" + menuInfo.getComputerID() + ", " + partIDs.get(inputNum - 1) + ", " + inputCount + ");");
 
             stmt.close();
             conn.close();
         }
         catch (SQLException exc) {
             System.out.println("ERROR: INVALID QUERY");
+            //exc.printStackTrace();
         }
 
     }
