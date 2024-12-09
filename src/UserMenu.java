@@ -32,7 +32,7 @@ public class UserMenu {
                     menu2.openSearchMenu(this, dbConfig);
                     break;
                 case "a":
-                    this.openAccountOption();
+                    this.openAccountOption(dbConfig);
                     break;
                 case "q":
                     exitLoop = true;
@@ -44,18 +44,17 @@ public class UserMenu {
     }
 
     //TODO: DB Compatible
-    private void openAccountOption() {
+    private void openAccountOption(DatabaseConfig dbConfig) {
         System.out.println("==User Account==");
 
         boolean exitLoop = false;
+        UserInteraction userInteraction = new UserInteraction(dbConfig);
 
         while (!exitLoop) {
             System.out.printf("Username: %s\n", this.username);
 
-            //TODO: Fetch and print password from DB
-            String accPassword = "<PASSWORD>";
-            System.out.printf("Username: %s\n", accPassword);
-
+            String accPassword = userInteraction.getUserDetail(this.username, "Password");
+            System.out.printf("Password: %s\n", "*".repeat(accPassword.length()));
 
             System.out.println("Please Select one of the following options:");
             System.out.println("\tEdit Username [U] || Edit Password [P] || Return to Menu [Q]");
@@ -65,10 +64,10 @@ public class UserMenu {
 
             switch (input.toLowerCase()) {
                 case "u":
-                    this.username = changeUsername(this.username);
+                    this.username = changeUsername(dbConfig, this.username);
                     break;
                 case "p":
-                    changePassword(this.username);
+                    changePassword(dbConfig, this.username);
                     break;
                 case "q":
                     exitLoop = true;
@@ -81,20 +80,31 @@ public class UserMenu {
 
     //TODO: DB Compatible
     //Returns username that will be used henceforth
-    private static String changeUsername (String origUsername) {
+    private static String changeUsername (DatabaseConfig dbConfig, String origUsername) {
+        UserInteraction userInteraction = new UserInteraction(dbConfig);
+
         String input = UserMenu.getUserInput("\nEnter a new Username: ");
         while (input.length() == 0) {
             input = UserMenu.getUserInput("");
         }
 
+
         //TODO: Check that username is not already taken
         //TODO: Change Username in DB
         //TODO: Give Proper failure/Success output
+        userInteraction.changeUsername(origUsername, input);
         return input;
     }
 
     //TODO: DB Compatible
-    private static void changePassword (String username) {
+    private static void changePassword (DatabaseConfig dbConfig, String username) {
+        UserInteraction userInteraction = new UserInteraction(dbConfig);
+
+        String oldPassword = UserMenu.getUserInput("\nEnter your old/current Password: ");
+        while (oldPassword.length() == 0) {
+            oldPassword = UserMenu.getUserInput("");
+        }
+
         String input = UserMenu.getUserInput("\nEnter a new Password: ");
         while (input.length() == 0) {
             input = UserMenu.getUserInput("");
@@ -102,6 +112,7 @@ public class UserMenu {
 
         //TODO: Change Password in DB
         //TODO: Give Proper failure/Success output
+        userInteraction.changePassword(username, oldPassword, input);
     }
 
     public String getUsername() {

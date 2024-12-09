@@ -1,3 +1,7 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 public class PartPickerStart {
 
     public static void main(String[] args) {
@@ -13,18 +17,34 @@ public class PartPickerStart {
         String password = args[2];
         String sqlFilePath = args[3];
 
+        // Check if the database configuration is valid
+        if (!isValidDatabaseConfig(baseUrl, username, password)) {
+            System.err.println("Error: Invalid database configuration or connection.");
+            return;
+        }
+
         // Save the database configuration (url, user, pass) for later use
         DatabaseConfig dbConfig = new DatabaseConfig(baseUrl, username, password);
 
         // Initialize the database (requires baseURL specifically)
         InitializeDatabase.initializeDatabase(baseUrl, username, password, sqlFilePath);
 
-        //TODO: Inform if arguments or connection invalid.
-
         //Prompt User Login/Register/Quit in a NEW Method
         openStartMenu(dbConfig); // Pass the dbConfig object to the method (this could be done differently if needed)
 
 
+    }
+
+
+    private static boolean isValidDatabaseConfig(String baseUrl, String username, String password) {
+        // Check if the database configuration is valid
+        try (Connection conn = DriverManager.getConnection(baseUrl, username, password)) {
+            System.out.println("Connected to the database!");
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error connecting to the database: " + e.getMessage());
+            return false;
+        }
     }
 
 
@@ -107,8 +127,6 @@ public class PartPickerStart {
         }
     }
 
-    //TODO: DB Compatible
-    //TODO: Username/Password Length Checks
     private static void openRegisterOption(DatabaseConfig dbConfig) {
         boolean exitLoop = false;
         UserInteraction userInteraction = new UserInteraction(dbConfig);
