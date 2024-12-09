@@ -24,8 +24,6 @@ public class PartPickerStart {
         //Prompt User Login/Register/Quit in a NEW Method
         openStartMenu(dbConfig); // Pass the dbConfig object to the method (this could be done differently if needed)
 
-        //TODO: Error Handling
-        //TODO: Close Database Connection
 
     }
 
@@ -77,7 +75,7 @@ public class PartPickerStart {
                 if (computerID != -1) {
                     // Create menu object and go to user menu
                     UserMenu userMenu = new UserMenu(inputUsername, computerID);
-                    userMenu.openUserMenu();
+                    userMenu.openUserMenu(dbConfig);
                     exitLoop = true;
                 } else {
                     System.out.println("Error: No computer found for the user.");

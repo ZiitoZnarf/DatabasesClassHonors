@@ -1,6 +1,6 @@
 public class ComputerMenu {
 
-    public void openComputerMenu(UserMenu menuInfo) {
+    public void openComputerMenu(UserMenu menuInfo, DatabaseConfig dbConfig) {
         //display current computer in diff method
         //loop through selection options
         System.out.println("==Computer Actions==");

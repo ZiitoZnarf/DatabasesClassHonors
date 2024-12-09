@@ -10,7 +10,7 @@ public class UserMenu {
     }
 
     //Main user options menu (computer, parts, account, quit)
-    public void openUserMenu() {
+    public void openUserMenu(DatabaseConfig dbConfig) {
         System.out.println("==User Actions==");
 
         boolean exitLoop = false;
@@ -25,11 +25,11 @@ public class UserMenu {
             switch (input.toLowerCase()) {
                 case "c":
                     ComputerMenu menu = new ComputerMenu();
-                    menu.openComputerMenu(this);
+                    menu.openComputerMenu(this, dbConfig);
                     break;
                 case "p":
                     SearchMenu menu2 = new SearchMenu();
-                    menu2.openSearchMenu(this);
+                    menu2.openSearchMenu(this, dbConfig);
                     break;
                 case "a":
                     this.openAccountOption();
