@@ -66,11 +66,9 @@ public class PartPickerStart {
             String inputPassword = UserMenu.getUserInput("Input Password: ");
             System.out.println();
 
-            //TODO: CHECK HERE IF USERNAME/PASSWORD IS VALID
             boolean loginValid = userInteraction.validateLogin(inputUsername, inputPassword);
 
             if (loginValid) {
-                //TODO: FIX THIS, returning error Unknown column 'computer_id' in 'field list'
                 int computerID = userInteraction.getUserComputerId(inputUsername);
                 if (computerID != -1) {
                     // Create menu object and go to user menu
@@ -113,23 +111,39 @@ public class PartPickerStart {
     //TODO: Username/Password Length Checks
     private static void openRegisterOption(DatabaseConfig dbConfig) {
         boolean exitLoop = false;
+        UserInteraction userInteraction = new UserInteraction(dbConfig);
 
         while (!exitLoop) {
             String inputUsername = UserMenu.getUserInput("Please enter a Username: ");
             //TODO: Check if Username is taken or input is empty
+            if(inputUsername.isEmpty()){
+                System.out.println("Error: Username cannot be empty.");
+                continue;
+            }
 
 
             String inputPassword = UserMenu.getUserInput("Please enter a Password: ");
-            //TODO: Check if password is empty
+            if(inputPassword.isEmpty()) {
+                System.out.println("Error: Password cannot be empty.");
+                continue;
+            }
 
-
-            System.out.println();
-            //TODO: Add new user to system
 
             String inputComputerName = UserMenu.getUserInput("Please enter a Name for your first Computer: ");
-            //TODO: Add Computer to System Managed by new user
+            if(inputComputerName.isEmpty()){
+                System.out.println("Error: Computer Name cannot be empty.");
+                continue;
+            }
 
-            exitLoop = true;
+            boolean registrationSuccess = userInteraction.registerUser(inputUsername, inputPassword, inputComputerName);
+
+            if (registrationSuccess) {
+                exitLoop = true;
+            } else {
+                System.out.println("Error: Registration failed. Please try again.");
+            }
+
+
         }
     }
 }
