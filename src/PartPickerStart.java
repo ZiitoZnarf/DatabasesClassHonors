@@ -51,15 +51,20 @@ public class PartPickerStart {
             System.out.println();
 
             //TODO: CHECK HERE IF USERNAME/PASSWORD IS VALID
-            boolean loginValid = true;
+            String loginValid = "user";
 
-            if (loginValid) {
+            if (loginValid.equals("user")) {
                 //TODO: Fetch first computer for given username
                 int computerID = 1;
 
                 //Create menu object and go to user menu
                 UserMenu userMenu = new UserMenu(inputUsername, computerID);
                 userMenu.openUserMenu();
+                exitLoop = true;
+            }
+            else if (loginValid.equals("admin")){
+                AdminMenu adminMenu = new AdminMenu();
+                adminMenu.openAdminMenu();
                 exitLoop = true;
             }
             else {

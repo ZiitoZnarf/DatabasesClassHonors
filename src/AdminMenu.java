@@ -1,50 +1,33 @@
-import java.util.ArrayList;
+public class AdminMenu {
 
-public class SearchMenu {
+    public void openAdminMenu() {
+        System.out.println("==User Actions==");
 
-    public void openSearchMenu(UserMenu menuInfo) {
         boolean exitLoop = false;
-        ArrayList<Integer> partIds = new ArrayList<>();
-        boolean isMotherboard = false;
 
-        //Conduct Search Parameters (in diff method probs) and return array of part ids
-        //Prompt about options in a loop
-        //exit when you quit
-        while(!exitLoop) {
-            boolean exitLoop2 = false;
-            isMotherboard = executeSearch(partIds);
+        while (!exitLoop) {
+            System.out.println("Please Select one of the following options:");
+            System.out.println("\tAdd New Part [C] || Logout [Q]");
 
-            while(!exitLoop2) {
+            String input = UserMenu.getUserInput("\n> ");
+            System.out.println();
 
-                System.out.println("\nPlease Select one of the following options:");
-                System.out.println("\tAdd a Part to Computer [A] || Search Filters [S] || Return to Menu [Q]");
-
-                String input = UserMenu.getUserInput("\n> ");
-
-                switch (input.toLowerCase()) {
-                    case "a":
-                        addItemToComputer(partIds, isMotherboard);
-                        break;
-                    case "s":
-                        exitLoop2 = true;
-                        break;
-                    case "q":
-                        exitLoop = true;
-                        exitLoop2 = true;
-                        break;
-                    default:
-                        System.out.println("Error: System Input not recognized!\n");
-                }
+            switch (input.toLowerCase()) {
+                case "a":
+                    addNewItem();
+                    break;
+                case "q":
+                    exitLoop = true;
+                    break;
+                default:
+                    System.out.println("Error: System Input not recognized!\n");
             }
         }
-
     }
 
-    //True means that the ids are motherboard ids
-    private static boolean executeSearch (ArrayList<Integer> partIDs) {
+    private static void addNewItem() {
         boolean canPass = false;
-        System.out.println("==Please Enter Your Search Filters==");
-        System.out.println("For all filters following the Part Type, you may simply hit the [ENTER] key\nto skip.");
+        System.out.println("==Please Enter Your Item Attributes==");
 
         //Get Part Type as Input
         System.out.println("\nSelect a Part Type out of the following:");
@@ -196,25 +179,6 @@ public class SearchMenu {
 
                 break;
         }
-
-        return true;
     }
 
-    private static void addItemToComputer(ArrayList<Integer> partIDs, boolean isMotherboard) {
-        System.out.println("Please Enter the NumberId of the item you wish to add: ");
-        int inputNum = -1;
-
-        while(inputNum < 1 || inputNum > partIDs.size()) {
-            String temp = UserMenu.getUserInput("");
-            inputNum = Integer.parseInt(temp);
-        }
-
-        System.out.println("Please Enter the quantity of the item you wish to add: ");
-        String temp = UserMenu.getUserInput("");
-        int inputCount = Integer.parseInt(temp);
-
-
-        //TODO: Add part to system
-
-    }
 }
