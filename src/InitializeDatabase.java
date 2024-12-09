@@ -69,5 +69,4 @@ public class InitializeDatabase {
         initializeDatabase(args[0], args[1], args[2], args[3]);
     }
 
-    // TODO: either make new file for queries or add them in this file (to handle all database updates)
 }

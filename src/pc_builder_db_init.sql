@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS COMPUTER (
                           ComputerID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
                           AccUsername VARCHAR(255) NOT NULL,
                           ComputerName VARCHAR(255) NOT NULL,
-                          FOREIGN KEY (AccUsername) REFERENCES USER_ACCOUNT(Username) ON DELETE CASCADE
+                          FOREIGN KEY (AccUsername) REFERENCES USER_ACCOUNT(Username) ON UPDATE CASCADE
 );
 
 # MOTHERBOARD (MotherboardID, MotherboardName, MotherboardPrice, MemorySlots)
